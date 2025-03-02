@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodix - Mood-Based Music Player</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Moodix 🎵</h1>
+        <p>AI-Powered Mood-Based Music Player</p>
+    </header>
+
+    <section>
+        <h2>Select Your Mood</h2>
+        <button onclick="setMood('happy')">😊 Happy</button>
+        <button onclick="setMood('sad')">😢 Sad</button>
+        <button onclick="setMood('relaxed')">😌 Relaxed</button>
+        <button onclick="setMood('energetic')">⚡ Energetic</button>
+    </section>
+
+    <section>
+        <h2>Your Playlist</h2>
+        <ul id="playlist"></ul>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
