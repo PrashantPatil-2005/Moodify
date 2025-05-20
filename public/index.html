@@ -1,0 +1,135 @@
+// index.html - placeholder content
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodify - Music for your Mood</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Moodify</h1>
+                <p class="tagline">Music for your mood</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="mood.html">Detect Mood</a></li>
+                    <li><a href="player.html">Player</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>Find the perfect soundtrack for your emotions</h2>
+                    <p>Moodify uses advanced mood detection to suggest music that matches how you feel.</p>
+                    <a href="mood.html" class="btn primary-btn">Get Started</a>
+                </div>
+                <div class="hero-image">
+                    <img src="assets/images/music-mood.svg" alt="Music and mood illustration" class="placeholder-image">
+                </div>
+            </section>
+
+            <section class="features">
+                <h2>How It Works</h2>
+                <div class="feature-cards">
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <h3>Detect Your Mood</h3>
+                        <p>Share how you're feeling through text or facial recognition.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <h3>Match With Music</h3>
+                        <p>Our algorithm finds songs that complement your emotional state.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-headphones"></i>
+                        </div>
+                        <h3>Enjoy &amp; Rate</h3>
+                        <p>Listen to your personalized playlist and rate songs to improve recommendations.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mood-categories">
+                <h2>Browse by Mood</h2>
+                <div class="mood-grid">
+                    <div class="mood-item" data-mood="happy">
+                        <div class="mood-icon"><i class="fas fa-laugh"></i></div>
+                        <h3>Happy</h3>
+                    </div>
+                    <div class="mood-item" data-mood="sad">
+                        <div class="mood-icon"><i class="fas fa-sad-tear"></i></div>
+                        <h3>Sad</h3>
+                    </div>
+                    <div class="mood-item" data-mood="energetic">
+                        <div class="mood-icon"><i class="fas fa-bolt"></i></div>
+                        <h3>Energetic</h3>
+                    </div>
+                    <div class="mood-item" data-mood="relaxed">
+                        <div class="mood-icon"><i class="fas fa-cloud"></i></div>
+                        <h3>Relaxed</h3>
+                    </div>
+                    <div class="mood-item" data-mood="focused">
+                        <div class="mood-icon"><i class="fas fa-bullseye"></i></div>
+                        <h3>Focused</h3>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Moodify</h2>
+                    <p>Music for your mood</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="mood.html">Detect Mood</a></li>
+                        <li><a href="player.html">Player</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Moodify. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click event to mood items
+            const moodItems = document.querySelectorAll('.mood-item');
+            moodItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const moodName = this.getAttribute('data-mood');
+                    // Store selected mood in localStorage
+                    localStorage.setItem('selectedMood', moodName);
+                    // Redirect to player page
+                    window.location.href = 'player.html';
+                });
+            });
+        });
+    </script>
+
+<script type="module" src="js/player.js"></script>
+<script type="module" src="js/index.js"></script>
+<script type="module" src="js/mood.js"></script>
+</body>
+</html>

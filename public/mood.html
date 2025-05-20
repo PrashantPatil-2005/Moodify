@@ -1,0 +1,268 @@
+// mood.html - placeholder content
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodify - Detect Your Mood</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Moodify</h1>
+                <p class="tagline">Music for your mood</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="mood.html" class="active">Detect Mood</a></li>
+                    <li><a href="player.html">Player</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="mood-header">
+                <h2>How are you feeling today?</h2>
+                <p>Choose a detection method to discover music that matches your current mood</p>
+            </section>
+
+            <section class="mood-detection-options">
+                <div class="detection-tabs">
+                    <button class="tab-button active" data-tab="manual">Select Manually</button>
+                    <button class="tab-button" data-tab="text">Text Analysis</button>
+                    <button class="tab-button" data-tab="face">Face Detection</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Manual Selection Tab -->
+                    <div id="manual" class="tab-pane active">
+                        <div class="mood-selection-grid">
+                            <div class="mood-card" data-mood="happy">
+                                <div class="mood-icon"><i class="fas fa-laugh"></i></div>
+                                <h3>Happy</h3>
+                                <p>Upbeat and cheerful songs to boost your mood</p>
+                            </div>
+                            <div class="mood-card" data-mood="sad">
+                                <div class="mood-icon"><i class="fas fa-sad-tear"></i></div>
+                                <h3>Sad</h3>
+                                <p>Emotional and reflective songs for when you need to process feelings</p>
+                            </div>
+                            <div class="mood-card" data-mood="energetic">
+                                <div class="mood-icon"><i class="fas fa-bolt"></i></div>
+                                <h3>Energetic</h3>
+                                <p>High-energy songs to motivate and energize</p>
+                            </div>
+                            <div class="mood-card" data-mood="relaxed">
+                                <div class="mood-icon"><i class="fas fa-cloud"></i></div>
+                                <h3>Relaxed</h3>
+                                <p>Calm and peaceful songs for relaxation and unwinding</p>
+                            </div>
+                            <div class="mood-card" data-mood="focused">
+                                <div class="mood-icon"><i class="fas fa-bullseye"></i></div>
+                                <h3>Focused</h3>
+                                <p>Songs that help with concentration and productivity</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Analysis Tab -->
+                    <div id="text" class="tab-pane">
+                        <div class="text-analysis">
+                            <h3>Tell us how you're feeling</h3>
+                            <p>Write a few sentences about your current mood and we'll analyze it</p>
+                            <form id="text-mood-form">
+                                <textarea id="mood-text" rows="5" placeholder="For example: I just finished a great workout and feel energized and ready to tackle the day..."></textarea>
+                                <button type="submit" class="btn primary-btn">Analyze My Mood</button>
+                            </form>
+                            <div id="text-result" class="result-container hidden">
+                                <h4>Analysis Result</h4>
+                                <div class="detected-mood">
+                                    <span class="mood-icon"></span>
+                                    <span class="mood-name"></span>
+                                </div>
+                                <button id="text-confirm-btn" class="btn secondary-btn">Play Music for This Mood</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Face Detection Tab -->
+                    <div id="face" class="tab-pane">
+                        <div class="face-analysis">
+                            <h3>Detect mood from your expression</h3>
+                            <p>Allow camera access or upload a photo</p>
+                            <div class="camera-container">
+                                <video id="video" autoplay playsinline></video>
+                                <canvas id="canvas" class="hidden"></canvas>
+                                <div class="camera-controls">
+                                    <button id="capture-btn" class="btn accent-btn"><i class="fas fa-camera"></i> Capture</button>
+                                    <p>OR</p>
+                                    <label for="upload-image" class="btn secondary-btn">
+                                        <i class="fas fa-upload"></i> Upload Photo
+                                    </label>
+                                    <input type="file" id="upload-image" accept="image/*" class="hidden">
+                                </div>
+                            </div>
+                            <div id="face-result" class="result-container hidden">
+                                <h4>Analysis Result</h4>
+                                <div class="detected-mood">
+                                    <span class="mood-icon"></span>
+                                    <span class="mood-name"></span>
+                                </div>
+                                <button id="face-confirm-btn" class="btn secondary-btn">Play Music for This Mood</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Moodify</h2>
+                    <p>Music for your mood</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="mood.html">Detect Mood</a></li>
+                        <li><a href="player.html">Player</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Moodify. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/moodDetector.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Deactivate all tabs
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    
+                    // Activate clicked tab
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // Manual mood selection
+            const moodCards = document.querySelectorAll('.mood-card');
+            moodCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const moodName = this.getAttribute('data-mood');
+                    // Store selected mood in localStorage
+                    localStorage.setItem('selectedMood', moodName);
+                    localStorage.setItem('detectionMethod', 'manual');
+                    // Redirect to player page
+                    window.location.href = 'player.html';
+                });
+            });
+
+            // Text mood analysis form
+            const textForm = document.getElementById('text-mood-form');
+            textForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const moodText = document.getElementById('mood-text').value;
+                
+                if (moodText.trim() === '') {
+                    alert('Please enter some text about your mood.');
+                    return;
+                }
+
+                // Simulate mood detection (this would connect to your backend)
+                const moods = ['happy', 'sad', 'energetic', 'relaxed', 'focused'];
+                const detectedMood = moods[Math.floor(Math.random() * moods.length)];
+                
+                // Display result
+                const resultContainer = document.getElementById('text-result');
+                resultContainer.classList.remove('hidden');
+                
+                const moodIcon = resultContainer.querySelector('.mood-icon');
+                const moodName = resultContainer.querySelector('.mood-name');
+                
+                // Set icon based on mood
+                moodIcon.innerHTML = getMoodIcon(detectedMood);
+                moodName.textContent = detectedMood.charAt(0).toUpperCase() + detectedMood.slice(1);
+                
+                // Confirm button
+                const confirmBtn = document.getElementById('text-confirm-btn');
+                confirmBtn.addEventListener('click', function() {
+                    localStorage.setItem('selectedMood', detectedMood);
+                    localStorage.setItem('detectionMethod', 'text');
+                    window.location.href = 'player.html';
+                });
+            });
+
+            // Function to get icon based on mood
+            function getMoodIcon(mood) {
+                const icons = {
+                    'happy': '<i class="fas fa-laugh"></i>',
+                    'sad': '<i class="fas fa-sad-tear"></i>',
+                    'energetic': '<i class="fas fa-bolt"></i>',
+                    'relaxed': '<i class="fas fa-cloud"></i>',
+                    'focused': '<i class="fas fa-bullseye"></i>'
+                };
+                return icons[mood] || '<i class="fas fa-question"></i>';
+            }
+
+            // Face detection (dummy implementation - would need real API integration)
+            const captureBtn = document.getElementById('capture-btn');
+            if (captureBtn) {
+                captureBtn.addEventListener('click', function() {
+                    // This would normally capture from webcam and send to backend
+                    simulateFaceDetection();
+                });
+            }
+
+            const uploadInput = document.getElementById('upload-image');
+            if (uploadInput) {
+                uploadInput.addEventListener('change', function() {
+                    // This would normally read the uploaded file and send to backend
+                    simulateFaceDetection();
+                });
+            }
+
+            function simulateFaceDetection() {
+                // Simulate mood detection
+                const moods = ['happy', 'sad', 'energetic', 'relaxed', 'focused'];
+                const detectedMood = moods[Math.floor(Math.random() * moods.length)];
+                
+                // Display result
+                const resultContainer = document.getElementById('face-result');
+                resultContainer.classList.remove('hidden');
+                
+                const moodIcon = resultContainer.querySelector('.mood-icon');
+                const moodName = resultContainer.querySelector('.mood-name');
+                
+                moodIcon.innerHTML = getMoodIcon(detectedMood);
+                moodName.textContent = detectedMood.charAt(0).toUpperCase() + detectedMood.slice(1);
+                
+                // Confirm button
+                const confirmBtn = document.getElementById('face-confirm-btn');
+                confirmBtn.addEventListener('click', function() {
+                    localStorage.setItem('selectedMood', detectedMood);
+                    localStorage.setItem('detectionMethod', 'face');
+                    window.location.href = 'player.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
