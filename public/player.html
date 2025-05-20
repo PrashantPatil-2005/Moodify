@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodify - Music Player</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Player-specific styles */
+        .player-container {
+            background: linear-gradient(to bottom right, #303f9f, #7b1fa2);
+            border-radius: 12px;
+            padding: 30px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .mood-indicator {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-left: auto;
+        }
+
+        .mood-indicator i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .song-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .song-info img {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            object-fit: cover;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .song-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .song-artist {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
+        }
+
+        .song-genre {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .control-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            margin: 0 15px;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .control-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .play-pause {
+            font-size: 32px;
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 60px;
+            height: 60px;
+        }
+
+        .play-pause:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: white;
+            border-radius: 3px;
+            width: 0;
+        }
+
+        .progress-thumb {
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: -5px;
+            left: 0;
+            margin-left: -8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .playlist-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .playlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .playlist-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .playlist-count {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .playlist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .playlist-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .playlist-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .playlist-item-number {
+            width: 24px;
+            margin-right: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+        }
+        
+        .playlist-item-info {
+            flex-grow: 1;
+        }
+
+        .playlist-item-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .playlist-item-artist {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .playlist-item-duration {
+            margin-left: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .feedback-section {
+            margin-top: 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .rating {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .rating i {
+            font-size: 24px;
+            margin: 0 5px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .rating i.active {
+            color: #ffeb3b;
+        }
+
+        .feedback-input {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            resize: none;
+            margin-bottom: 15px;
+        }
+
+        .feedback-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .feedback-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Mood-specific theme colors */
+        .theme-happy {
+            background: linear-gradient(to bottom right, #FFD54F, #FF9800);
+        }
+
+        .theme-sad {
+            background: linear-gradient(to bottom right, #42A5F5, #1976D2);
+        }
+
+        .theme-energetic {
+            background: linear-gradient(to bottom right, #FF5252, #D32F2F);
+        }
+
+        .theme-relaxed {
+            background: linear-gradient(to bottom right, #66BB6A, #388E3C);
+        }
+
+        .theme-focused {
+            background: linear-gradient(to bottom right, #7E57C2, #512DA8);
+        }
+
+        .visualizer-container {
+            height: 80px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+
+        .visualizer-bar {
+            width: 8px;
+            background-color: white;
+            border-radius: 3px;
+            margin: 0 2px;
+            height: 5px;
+            transition: height 0.1s ease;
+        }
+
+        @media (max-width: 768px) {
+            .player-container {
+                padding: 20px;
+            }
+
+            .song-info img {
+                width: 180px;
+                height: 180px;
+            }
+
+            .playlist-item {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Moodify</h1>
+                <p class="tagline">Music for your mood</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="mood.html">Detect Mood</a></li>
+                    <li><a href="player.html" class="active">Player</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="player-header-section">
+                <h2>Music Player</h2>
+                <p id="mood-description">Music selected based on your mood</p>
+            </section>
+
+            <div class="player-container">
+                <div class="player-header">
+                    <h3>Now Playing</h3>
+                    <div class="mood-indicator">
+                        <i id="mood-icon" class="fas fa-smile"></i>
+                        <span id="current-mood">Happy</span>
+                    </div>
+                </div>
+
+                <div class="visualizer-container" id="visualizer">
+                    <!-- Bars will be generated by JS -->
+                </div>
+
+                <div class="song-info">
+                    <img id="song-artwork" src="/api/placeholder/240/240" alt="Album Artwork">
+                    <div class="song-title" id="song-title">Loading...</div>
+                    <div class="song-artist" id="song-artist"></div>
+                    <div class="song-genre" id="song-genre"></div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar">
+                        <div class="progress" id="progress"></div>
+                        <div class="progress-thumb" id="progress-thumb"></div>
+                    </div>
+                    <div class="time-display">
+                        <div id="current-time">0:00</div>
+                        <div id="duration">0:00</div>
+                    </div>
+                </div>
+
+                <div class="player-controls">
+                    <button class="control-button" id="shuffle-btn">
+                        <i class="fas fa-random"></i>
+                    </button>
+                    <button class="control-button" id="prev-btn">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-button play-pause" id="play-pause-btn">
+                        <i class="fas fa-play" id="play-icon"></i>
+                    </button>
+                    <button class="control-button" id="next-btn">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <button class="control-button" id="repeat-btn">
+                        <i class="fas fa-repeat"></i>
+                    </button>
+                </div>
+
+                <div class="playlist-container">
+                    <div class="playlist-header">
+                        <div class="playlist-title">Songs for <span id="playlist-mood">your mood</span></div>
+                        <div class="playlist-count"><span id="song-count">0</span> songs</div>
+                    </div>
+                    <ul class="playlist" id="playlist">
+                        <!-- Playlist items will be generated dynamically by JavaScript -->
+                    </ul>
+                </div>
+
+                <div class="feedback-section">
+                    <h3>How's the music selection?</h3>
+                    <p>Rate and tell us what you think</p>
+                    <div class="rating" id="rating">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                    <textarea class="feedback-input" id="feedback-text" rows="3" placeholder="Share your thoughts about this selection..."></textarea>
+                    <div class="feedback-actions">
+                        <button class="btn primary-btn" id="submit-feedback">Submit Feedback</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Moodify</h2>
+                    <p>Music for your mood</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="mood.html">Detect Mood</a></li>
+                        <li><a href="player.html">Player</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Moodify. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <audio id="audio-player"></audio>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get elements
+            const audioPlayer = document.getElementById('audio-player');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const playIcon = document.getElementById('play-icon');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const shuffleBtn = document.getElementById('shuffle-btn');
+            const repeatBtn = document.getElementById('repeat-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const progress = document.getElementById('progress');
+            const progressThumb = document.getElementById('progress-thumb');
+            const currentTimeElement = document.getElementById('current-time');
+            const durationElement = document.getElementById('duration');
+            const songTitle = document.getElementById('song-title');
+            const songArtist = document.getElementById('song-artist');
+            const songGenre = document.getElementById('song-genre');
+            const songArtwork = document.getElementById('song-artwork');
+            const playlist = document.getElementById('playlist');
+            const currentMoodElement = document.getElementById('current-mood');
+            const moodIcon = document.getElementById('mood-icon');
+            const playlistMood = document.getElementById('playlist-mood');
+            const songCount = document.getElementById('song-count');
+            const moodDescription = document.getElementById('mood-description');
+            const submitFeedbackBtn = document.getElementById('submit-feedback');
+            const feedbackText = document.getElementById('feedback-text');
+            const ratingStars = document.querySelectorAll('.rating i');
+            const visualizer = document.getElementById('visualizer');
+            
+            // Create visualizer bars
+            for (let i = 0; i < 30; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'visualizer-bar';
+                visualizer.appendChild(bar);
+            }
+            const visualizerBars = document.querySelectorAll('.visualizer-bar');
+            
+            // Player state
+            let currentSongIndex = 0;
+            let isPlaying = false;
+            let isShuffleOn = false;
+            let isRepeatOn = false;
+            let songs = [];
+            let currentMood = '';
+            let currentRating = 0;
+            let userLoggedIn = false; // Replace with actual auth check
+            let userId = 1; // Replace with actual user ID from authentication
+            
+            // Mood icons mapping
+            const moodIcons = {
+                'happy': '<i class="fas fa-laugh"></i>',
+                'sad': '<i class="fas fa-sad-tear"></i>',
+                'energetic': '<i class="fas fa-bolt"></i>',
+                'relaxed': '<i class="fas fa-cloud"></i>',
+                'focused': '<i class="fas fa-bullseye"></i>'
+            };
+            
+            // Initialize player with mood from localStorage
+            initializePlayer();
+            
+            function initializePlayer() {
+                // Get the mood from localStorage (set by mood.html)
+                currentMood = localStorage.getItem('selectedMood') || 'happy';
+                const detectionMethod = localStorage.getItem('detectionMethod') || 'manual';
+                
+                // Update UI with current mood
+                updateMoodUI(currentMood);
+                
+                // Fetch songs for the mood
+                fetchSongsForMood(currentMood);
+                
+                // Log mood selection if user is logged in
+                if (userLoggedIn) {
+                    logMoodSelection(currentMood, detectionMethod);
+                }
+            }
+            
+            function updateMoodUI(mood) {
+                // Set current mood text
+                currentMoodElement.textContent = mood.charAt(0).toUpperCase() + mood.slice(1);
+                playlistMood.textContent = mood;
+                
+                // Set mood icon
+                if (moodIcons[mood]) {
+                    moodIcon.className = '';
+                    moodIcon.innerHTML = moodIcons[mood];
+                }
+                
+                // Set theme color based on mood
+                const playerContainer = document.querySelector('.player-container');
+                playerContainer.className = 'player-container';
+                playerContainer.classList.add('theme-' + mood);
+                
+                // Set mood description
+                const descriptions = {
+                    'happy': 'Upbeat and cheerful songs to boost your mood',
+                    'sad': 'Emotional and reflective songs for when you need to process feelings',
+                    'energetic': 'High-energy songs to motivate and energize',
+                    'relaxed': 'Calm and peaceful songs for relaxation and unwinding',
+                    'focused': 'Songs that help with concentration and productivity'
+                };
+                moodDescription.textContent = descriptions[mood] || 'Music selected based on your mood';
+            }
+            
+            function fetchSongsForMood(mood) {
+                // This would normally be an API call to your backend
+                // For now, we'll simulate it with a delay
+                
+                // Show loading state
+                songTitle.textContent = "Loading...";
+                songArtist.textContent = "";
+                songGenre.textContent = "";
+                
+                // Sample songs based on mood (would be fetched from API)
+                // In a real implementation, replace this with an actual API call
+                const moodId = getMoodId(mood);
+                
+                // Simulate API call with timeout
+                setTimeout(() => {
+                    // Mock API response
+                    fetch('/api/songs?mood_id=' + moodId)
+                        .then(response => response.json())
+                        .then(data => {
+                            songs = data;
+                            songCount.textContent = songs.length;
+                            renderPlaylist();
+                            if (songs.length > 0) {
+                                loadSong(0);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching songs:', error);
+                            // Use mock data as fallback
+                            mockSongsForMood(mood);
+                        });
+                }, 500);
+            }
+            
+            function mockSongsForMood(mood) {
+                // Mock data based on the database structure you provided
+                let mockSongs = [];
+                
+                if (mood === 'happy') {
+                    mockSongs = [
+                        { song_id: 1, title: 'Good Day', artist: 'Free Music Archive', genre: 'Pop', file_path: 'https://freemusicarchive.org/music/download/60fb23f14/' },
+                        { song_id: 2, title: 'Sunny Side Up', artist: 'Audionautix', genre: 'Electronic', file_path: 'https://audionautix.com/Music/SunnySideUp.mp3' },
+                        { song_id: 3, title: 'Happy Walk', artist: 'Bensound', genre: 'Pop', file_path: 'https://www.bensound.com/bensound-music/bensound-happyrock.mp3' },
+                        // More happy songs...
+                    ];
+                } else if (mood === 'sad') {
+                    mockSongs = [
+                        { song_id: 11, title: 'Sadness', artist: 'Free Music Archive', genre: 'Piano', file_path: 'https://freemusicarchive.org/music/download/08ff4618b/' },
+                        { song_id: 12, title: 'The Lonely', artist: 'Audionautix', genre: 'Ambient', file_path: 'https://audionautix.com/Music/TheLonely.mp3' },
+                        { song_id: 13, title: 'Memories', artist: 'Bensound', genre: 'Classical', file_path: 'https://www.bensound.com/bensound-music/bensound-memories.mp3' },
+                        // More sad songs...
+                    ];
+                } else if (mood === 'energetic') {
+                    mockSongs = [
+                        { song_id: 21, title: 'Energy', artist: 'Bensound', genre: 'Electronic', file_path: 'https://www.bensound.com/bensound-music/bensound-energy.mp3' },
+                        { song_id: 22, title: 'Downtown Funk', artist: 'AudionautiX', genre: 'Funk', file_path: 'https://audionautix.com/Music/DowntownFunk.mp3' },
+                        { song_id: 23, title: 'Powerful Beat', artist: 'Free Music Archive', genre: 'Electronic', file_path: 'https://freemusicarchive.org/music/download/e8451ed53/' },
+                        // More energetic songs...
+                    ];
+                } else if (mood === 'relaxed') {
+                    mockSongs = [
+                        { song_id: 31, title: 'Relaxing', artist: 'Bensound', genre: 'Ambient', file_path: 'https://www.bensound.com/bensound-music/bensound-relaxing.mp3' },
+                        { song_id: 32, title: 'Peaceful', artist: 'Audionautix', genre: 'Ambient', file_path: 'https://audionautix.com/Music/Peaceful.mp3' },
+                        { song_id: 33, title: 'Soft Meditation', artist: 'Free Music Archive', genre: 'Ambient', file_path: 'https://freemusicarchive.org/music/download/d6fea7e76/' },
+                        // More relaxed songs...
+                    ];
+                } else if (mood === 'focused') {
+                    mockSongs = [
+                        { song_id: 41, title: 'Deep Focus', artist: 'Bensound', genre: 'Electronic', file_path: 'https://www.bensound.com/bensound-music/bensound-deepblue.mp3' },
+                        { song_id: 42, title: 'Concentration', artist: 'Audionautix', genre: 'Electronic', file_path: 'https://audionautix.com/Music/GettingitDone.mp3' },
+                        { song_id: 43, title: 'Study Session', artist: 'Free Music Archive', genre: 'Piano', file_path: 'https://freemusicarchive.org/music/download/a9c8a5e29/' },
+                        // More focused songs...
+                    ];
+                }
+                
+                songs = mockSongs;
+                songCount.textContent = songs.length;
+                renderPlaylist();
+                if (songs.length > 0) {
+                    loadSong(0);
+                }
+            }
+            
+            function getMoodId(moodName) {
+                const moodMap = {
+                    'happy': 1,
+                    'sad': 2,
+                    'energetic': 3,
+                    'relaxed': 4,
+                    'focused': 5
+                };
+                return moodMap[moodName] || 1;
+            }
+            
+            function loadSong(index) {
+                if (songs.length === 0) return;
+                
+                // Ensure index is in bounds
+                if (index < 0) index = songs.length - 1;
+                if (index >= songs.length) index = 0;
+                
+                currentSongIndex = index;
+                const song = songs[currentSongIndex];
+                
+                // Update audio source
+                audioPlayer.src = song.file_path;
+                audioPlayer.load();
+                
+                // Update song info UI
+                songTitle.textContent = song.title;
+                songArtist.textContent = song.artist;
+                songGenre.textContent = song.genre;
+                
+                // Generate dummy artwork (would be actual artwork in production)
+                songArtwork.src = `/api/placeholder/240/240`;
+                
+                // Update playlist active item
+                updateActivePlaylistItem();
+                
+                // If playing, start the new song
+                if (isPlaying) {
+                    audioPlayer.play();
+                }
+            }
+            
+            function renderPlaylist() {
+                // Clear existing playlist
+                playlist.innerHTML = '';
+                
+                // Add songs to playlist
+                songs.forEach((song, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'playlist-item';
+                    if (index === currentSongIndex) {
+                        li.classList.add('active');
+                    }
+                    
+                    li.innerHTML = `
+                        <div class="playlist-item-number">${index + 1}</div>
+                        <div class="playlist-item-info">
+                            <div class="playlist-item-title">${song.title}</div>
+                            <div class="playlist-item-artist">${song.artist}</div>
+                        </div>
+                        <div class="playlist-item-duration">3:24</div>
+                    `;
+                    
+                    li.addEventListener('click', () => {
+                        loadSong(index);
+                        playAudio();
+                    });
+                    
+                    playlist.appendChild(li);
+                });
+            }
+            
+            function updateActivePlaylistItem() {
+                // Remove active class from all items
+                const items = playlist.querySelectorAll('.playlist-item');
+                items.forEach(item => item.classList.remove('active'));
+                
+                // Add active class to current song
+                if (items[currentSongIndex]) {
+                    items[currentSongIndex].classList.add('active');
+                }
+            }
+            
+            function playAudio() {
+                audioPlayer.play();
+                isPlaying = true;
+                playIcon.className = 'fas fa-pause';
+            }
+            
+            function pauseAudio() {
+                audioPlayer.pause();
+                isPlaying = false;
+                playIcon.className = 'fas fa-play';
+            }
+            
+            function logMoodSelection(mood, method) {
+                // This would be an API call to log the mood selection
+                // Example:
+                fetch('/api/mood-logs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        mood_id: getMoodId(mood),
+                        method: method
+                    })
+                })
+                .then(response => response.json())
+                .then(data => console.log('Mood logged:', data))
+                .catch(error => console.error('Error logging mood:', error));
+            }
+            
+            function submitFeedback() {
+                if (currentRating === 0) {
+                    alert('Please select a rating before submitting feedback');
+                    return;
+                }
+                
+                const feedback = {
+                    user_id: userId,
+                    song_id: songs[currentSongIndex].song_id,
+                    mood_id: getMoodId(currentMood),
+                    rating: currentRating,
+                    comment: feedbackText.value
+                };
+                
+                // This would be an API call to submit feedback
+                // Example:
+                fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(feedback)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Thank you for your feedback!');
+                    resetFeedbackForm();
+                })
+                .catch(error => {
+                    console.error('Error submitting feedback:', error);
+                    alert('Failed to submit feedback. Please try again.');
+                });
+            }
+            
+            function resetFeedbackForm() {
+                currentRating = 0;
+                feedbackText.value = '';
+                ratingStars.forEach(star => star.classList.remove('active'));
+            }
+            
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+            
+            function updateVisualizer() {
+                // Create random heights for visualizer bars
+                // In a real app, this would use audio frequency data
+                visualizerBars.forEach(bar => {
+                    if (isPlaying) {
+                        const height = Math.floor(Math.random() * 70) + 5;
+                        bar.style.height = `${height}px`;
+                    } else {
+                        bar.style.height = '5px';
+                    }
+                });
+            }
+            
+            // Event listeners
+            playPauseBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    pauseAudio();
+                } else {
+                    playAudio();
+                }
+            });
+            
+            prevBtn.addEventListener('click', () => {
+                loadSong(currentSongIndex - 1);
+                playAudio();
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                loadSong(currentSongIndex + 1);
+                playAudio();
+            });
+            
+            shuffleBtn.addEventListener('click', () => {
+                isShuffleOn = !isShuffleOn;
+                shuffleBtn.classList.toggle('active', isShuffleOn);
+            });
+            
+            repeatBtn.addEventListener('click', () => {
+                isRepeatOn = !isRepeatOn;
+                repeatBtn.classList.toggle('active', isRepeatOn);
+            });
+            
+            // Progress bar events
+            progressBar.addEventListener('click', (e) => {
+                const width = progressBar.clientWidth;
+                const clickPosition = e.offsetX;
+                const duration = audioPlayer.duration;
+                
+                audioPlayer.currentTime = (clickPosition / width) * duration;
+            });
+            
+            // Audio player events
+            audioPlayer.addEventListener('timeupdate', () => {
+                const duration = audioPlayer.duration;
+                const currentTime = audioPlayer.currentTime;
+                
+                if (isNaN(duration)) return;
+                
+                // Update progress bar
+                const progressPercent = (currentTime / duration) * 100;
+                progress.style.width = `${progressPercent}%`;
+                progressThumb.style.left = `${progressPercent}%`;
+                
+                // Update time display
+                currentTimeElement.textContent = formatTime(currentTime);
+                durationElement.textContent = formatTime(duration);
+            });
+            
+            audioPlayer.addEventListener('ended', () => {
+                if (isRepeatOn) {
+                    // Replay the same song
+                    audioPlayer.currentTime = 0;
+                    playAudio();
+                } else if (isShuffleOn) {
+                    // Play random song
+                    const randomIndex = Math.floor(Math.random() * songs.length);
+                    loadSong(randomIndex);
+                    playAudio();
+                } else {
+                    // Play next song
+                    loadSong(currentSongIndex + 1);
+                    playAudio();
+                }
+            });
+            
+            audioPlayer.addEventListener('loadedmetadata', () => {
+                durationElement.textContent = formatTime(audioPlayer.duration);
+            });
+            
+            // Rating stars events
+            ratingStars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const rating = parseInt(star.getAttribute('data-rating'));
+                    currentRating = rating;
+                    
+                    // Update UI
+                    ratingStars.forEach(s => {
+                        const starRating = parseInt(s.getAttribute('data-rating'));
+                        s.classList.toggle('active', starRating <= rating);
+                    });
+                });
+            });
+            
+            // Submit feedback
+            submitFeedbackBtn.addEventListener('click', submitFeedback);
+            
+            // Visualizer animation
+            setInterval(updateVisualizer, 100);
+        });
+    </script>
+</body>
+</html>
